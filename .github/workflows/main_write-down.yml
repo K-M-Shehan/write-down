@@ -52,4 +52,4 @@ jobs:
           app-name: 'write-down'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_2563D2C179D24988834D2FE520D02AB2 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_54D41E4D9C6A425AB0F7FC0CF2621EFE }}
