@@ -17,5 +17,14 @@ namespace NotesApi.Controllers {
       // fetching notes from supabase
       return Ok(_notes);
     }
+
+    // creating a note
+    [HttpPost]
+    public IActionResult PostNotes([FromBody] Note newNote) {
+      // sending to supabase
+      newNote.Id = _notes.Count + 1;
+      _notes.Add(newNote);
+      return CreatedAtAction(nameof(GetNotes), new { id = newNote.Id }, newNote);
+    }
   }
 }
