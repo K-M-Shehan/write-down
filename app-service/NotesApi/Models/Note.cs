@@ -1,4 +1,4 @@
-namespace NoteApi.Models;
+namespace NotesApi.Models;
 
 public class Note {
    public int Id { get; set; }
