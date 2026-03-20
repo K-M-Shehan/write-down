@@ -1,30 +1,47 @@
 using Microsoft.AspNetCore.Mvc;
 using NotesApi.Models;
+using Supabase;
+using Postgrest;
+using System;
 
 namespace NotesApi.Controllers {
   [ApiController]
   [Route("[controller]")]
   public class NotesController : ControllerBase {
-    // a list of notes for now
-    List<Note> _notes = new List<Note>() {
-      new Note { Id = 1, Title = "One Piece Final chapter", Content = "It's the friends you made along the way :)" },
-      new Note { Id = 2, Title = "Groceries", Content = "2 Eggs, 1 cola, 2 pkts instant noodles" }
-    };
+    
+    private readonly Supabase.Client _supabase;
+
+    public NotesController() {
+      string supabaseUrl = Environment.GetEnvironmentVariable("SUPABASE_URL");
+      string supabaseKey = Environment.GetEnvironmentVariable("SUPABASE_ANON_KEY");
+
+      if (string.IsNullOrEmpty(supabaseUrl) || string.IsNullOrEmpty(supabaseKey)) {
+        throw new Exception("Supabase credentials are not set in environment variables!");
+      }
+
+      _supabase = new Supabase.Client(supabaseUrl, supabaseKey);
+      _supabase.InitializeAsync().Wait();
+    }
 
     // getting all the notes
     [HttpGet]
-    public IActionResult GetNotes() {
+    public async Task<IActionResult> GetNotes() {
       // fetching notes from supabase
-      return Ok(_notes);
+      var response = await _supabase.From<Note>().Get(); // fetches all the rows
+
+      return Ok(response.Models);
     }
 
     // creating a note
     [HttpPost]
-    public IActionResult PostNotes([FromBody] Note newNote) {
+    public async Task<IActionResult> PostNotes([FromBody] Note newNote) {
       // sending to supabase
-      newNote.Id = _notes.Count + 1;
-      _notes.Add(newNote);
-      return CreatedAtAction(nameof(GetNotes), new { id = newNote.Id }, newNote);
+      newNote.Id = Guid.NewGuid();
+      newNote.CreatedAt = DateTime.UtcNow;
+
+      var response = await _supabase.From<Note>().Insert(newNote);
+
+      return CreatedAtAction(nameof(GetNotes), new { id = newNote.Id }, response.Models.First());
     }
   }
 }
