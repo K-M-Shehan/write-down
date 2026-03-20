@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using NotesApi.Models;
 using Supabase;
-using Postgrest;
 using System;
 
 namespace NotesApi.Controllers {
