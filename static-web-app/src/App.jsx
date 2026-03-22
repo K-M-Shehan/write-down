@@ -1,47 +1,30 @@
-import { useEffect, useState } from "react";
-import { getNotes, createNote } from "./api";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import NotesList from "./components/NotesList.jsx";
+import NoteForm from "./components/NoteForm.jsx";
 
-export default function App() {
+const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5124";
+
+function App() {
   const [notes, setNotes] = useState([]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
 
   useEffect(() => {
-    getNotes().then(setNotes);
+    axios.get(`${BASE_URL}/notes`)
+      .then(res => setNotes(res.data))
+      .catch(err => console.error(err));
   }, []);
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    const newNote = await createNote(title, content);
-    setNotes([...notes, newNote]);
-    setTitle("");
-    setContent("");
+  const handleAddNote = (newNote) => {
+    setNotes((prev) => [...prev, newNote]);
   }
 
   return (
     <div>
-      <h1>Notes</h1>
-
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="Title"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-        />
-        <textarea
-          placeholder="Content"
-          value={content}
-          onChange={e => setContent(e.target.value)}
-        />
-        <button type="submit">Add Note</button>
-      </form>
-
-      {notes.map(note => (
-        <div key={note.id}>
-          <h3>{note.title}</h3>
-          <p>{note.content}</p>
-        </div>
-      ))}
+      <h1>write down</h1>
+      <NoteForm onAdd={handleAddNote} />
+      <NotesList notes={notes} />
     </div>
-  );
+  )
 }
+
+export default App;

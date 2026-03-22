@@ -7,14 +7,8 @@ namespace NotesApi.Models {
   public class Note : BaseModel {
     [PrimaryKey("id")]
     public Guid Id { get; set; }
-
-    [Column("title")]
-    public string Title { get; set; } = string.Empty;
-
-    [Column("content")]
-    public string Content { get; set; } = string.Empty;
-
-    [Column("created_at")]
+    public string Title { get; set; }
+    public string Content { get; set; }
     public DateTime CreatedAt { get; set; }
   }
 }
