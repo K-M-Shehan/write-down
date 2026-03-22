@@ -11,7 +11,7 @@ namespace NotesApi.Controllers {
     private readonly Supabase.Client _supabase;
 
     public NotesController(Supabase.Client supabase) {
-      _supabase = supabase
+      _supabase = supabase;
     }
 
     // getting all the notes
@@ -22,7 +22,7 @@ namespace NotesApi.Controllers {
         var response = await _supabase.From<Note>().Get(); // fetches all the rows
         return Ok(response.Models.First());
       }
-      catch (System.Exception) {
+      catch (Exception ex) {
         return StatusCode(500, ex.Message);
       }
     }
