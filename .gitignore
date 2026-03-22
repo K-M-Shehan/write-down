@@ -15,4 +15,4 @@ Thumbs.db
 
 # Environment variables
 .env
-appsettings.Development.json
+app-service/NotesApi/appsetting.Development.json
