@@ -18,13 +18,16 @@ namespace NotesApi.Controllers {
     [HttpGet]
     public async Task<IActionResult> GetNotes() {
       // fetching notes from supabase
-      try {
-        var response = await _supabase.From<Note>().Get(); // fetches all the rows
-        return Ok(response.Models.First());
-      }
-      catch (Exception ex) {
-        return StatusCode(500, ex.Message);
-      }
+      var response = await _supabase.From<Note>().Get(); // fetches all the rows
+
+      var notesDto = response.Models.Select(note => new NoteDto {
+        Id = note.Id,
+        Title = note.Title,
+        Content = note.Content,
+        CreatedAt = note.CreatedAt
+      }).ToList();
+
+      return Ok(notesDto);
     }
 
     // creating a note
@@ -34,9 +37,27 @@ namespace NotesApi.Controllers {
       // the id is generated in the database
       newNote.CreatedAt = DateTime.UtcNow;
 
-      var response = await _supabase.From<Note>().Insert(newNote);
+      try {
+        var response = await _supabase.From<Note>().Insert(newNote);
+        
+        if(response.Models.Count == 0)
+          return StatusCode(500, "Insert failed");
 
-      return Ok(response.Models.First());
+        var note = response.Models.First();
+
+        var dto = new NoteDto { // mapping to dto
+          Id = note.Id,
+          Title = note.Title,
+          Content = note.Content,
+          CreatedAt = note.CreatedAt
+        };
+
+        return Ok(dto);
+
+      }
+      catch(Exception ex) {
+        return StatusCode(500, ex.Message);
+      }
     }
   }
 }
