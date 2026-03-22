@@ -19,7 +19,7 @@ builder.Services.AddSingleton<Supabase.Client>(sp => {
 builder.Services.AddCors(options => {
   options.AddPolicy("AllowFrontend",
     policy => {
-      policy.WithOrigins("http://localhost:5173", "https://nice-coast-0d3a09500.azurestaticapps.net")
+      policy.WithOrigins("http://localhost:5173", "https://nice-coast-0d3a09500.1.azurestaticapps.net")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
